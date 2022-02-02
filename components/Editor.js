@@ -2,7 +2,7 @@ import React from "react"
 import ReactMde from "react-mde"
 import Showdown from "showdown"
 
-export default function Editor({ currentNote, updateNote }) {
+export default function Editor({ currentNote, updateNote, updateTitle }) {
     const [selectedTab, setSelectedTab] = React.useState("write")
 
     const converter = new Showdown.Converter({
@@ -14,6 +14,12 @@ export default function Editor({ currentNote, updateNote }) {
 
     return (
         <section className="pane editor">
+            <input
+                id='title-input'
+                onChange={updateTitle}
+                name='title'
+                >
+            </input>
             <ReactMde
                 value={currentNote.body}
                 onChange={updateNote}
@@ -24,6 +30,7 @@ export default function Editor({ currentNote, updateNote }) {
                 }
                 minEditorHeight={80}
                 heightUnits="vh"
+                name='body'
             />
         </section>
     )

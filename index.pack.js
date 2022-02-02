@@ -995,9 +995,13 @@ function App() {
         currentNoteId = _React$useState4[0],
         setCurrentNoteId = _React$useState4[1];
 
+    console.log(notes);
+
     function createNewNote() {
         var newNote = {
             id: (0, _nanoid.nanoid)(),
+            // N O T E: GENERATE UNIQUE TITLES!!!
+            title: "Note " + (notes.length + 1),
             body: "# Type your markdown note's title here"
         };
         setNotes(function (prevNotes) {
@@ -1009,9 +1013,23 @@ function App() {
 
     function updateNote(text) {
         setNotes(function (oldNotes) {
-            return oldNotes.map(function (oldNote) {
-                return oldNote.id === currentNoteId ? _extends({}, oldNote, { body: text }) : oldNote;
+            var newNotes = oldNotes.map(function (oldNote) {
+                return oldNote.id === currentNoteId ? _extends({}, oldNote, {
+                    body: text }) : oldNote;
             });
+            localStorage.setItem('notes', JSON.stringify(newNotes));
+            return newNotes;
+        });
+    }
+
+    function updateTitle(event) {
+        setNotes(function (oldNotes) {
+            var newNotes = oldNotes.map(function (oldNote) {
+                return oldNote.id === currentNoteId ? _extends({}, oldNote, {
+                    title: event.target.value }) : oldNote;
+            });
+            localStorage.setItem('notes', JSON.stringify(newNotes));
+            return newNotes;
         });
     }
 
@@ -1019,6 +1037,16 @@ function App() {
         return notes.find(function (note) {
             return note.id === currentNoteId;
         }) || notes[0];
+    }
+
+    function deleteNote() {
+        setNotes(function (oldNotes) {
+            var newNotes = oldNotes.filter(function (item) {
+                return item.id != currentNoteId;
+            });
+            localStorage.setItem('notes', JSON.stringify(newNotes));
+            return newNotes;
+        });
     }
 
     return _react2.default.createElement(
@@ -1035,11 +1063,13 @@ function App() {
                 notes: notes,
                 currentNote: findCurrentNote(),
                 setCurrentNoteId: setCurrentNoteId,
-                newNote: createNewNote
+                newNote: createNewNote,
+                deleteNote: deleteNote
             }),
             currentNoteId && notes.length > 0 && _react2.default.createElement(_Editor2.default, {
                 currentNote: findCurrentNote(),
-                updateNote: updateNote
+                updateNote: updateNote,
+                updateTitle: updateTitle
             })
         ) :
         // no new notes
@@ -1140,7 +1170,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function Editor(_ref) {
     var currentNote = _ref.currentNote,
-        updateNote = _ref.updateNote;
+        updateNote = _ref.updateNote,
+        updateTitle = _ref.updateTitle;
 
     var _React$useState = _react2.default.useState("write"),
         _React$useState2 = _slicedToArray(_React$useState, 2),
@@ -1157,6 +1188,11 @@ function Editor(_ref) {
     return _react2.default.createElement(
         "section",
         { className: "pane editor" },
+        _react2.default.createElement("input", {
+            id: "title-input",
+            onChange: updateTitle,
+            name: "title"
+        }),
         _react2.default.createElement(_reactMde2.default, {
             value: currentNote.body,
             onChange: updateNote,
@@ -1166,7 +1202,8 @@ function Editor(_ref) {
                 return Promise.resolve(converter.makeHtml(markdown));
             },
             minEditorHeight: 80,
-            heightUnits: "vh"
+            heightUnits: "vh",
+            name: "body"
         })
     );
 }
@@ -1197,7 +1234,6 @@ function Sidebar(props) {
             _react2.default.createElement(
                 "div",
                 {
-
                     className: "title " + (note.id === props.currentNote.id ? "selected-note" : ""),
                     onClick: function onClick() {
                         return props.setCurrentNoteId(note.id);
@@ -1206,9 +1242,9 @@ function Sidebar(props) {
                 _react2.default.createElement(
                     "h4",
                     { className: "text-snippet" },
-                    "Note ",
-                    index + 1
-                )
+                    note.title
+                ),
+                _react2.default.createElement("i", { className: "fas fa-trash", onClick: props.deleteNote })
             )
         );
     });

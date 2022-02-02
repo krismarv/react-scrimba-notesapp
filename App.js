@@ -14,11 +14,14 @@ export default function App() {
     const [currentNoteId, setCurrentNoteId] = React.useState(
         (notes[0] && notes[0].id) || ""
     )
-    
-    
+
+    console.log(notes)
+
     function createNewNote() {
         const newNote = {
             id: nanoid(),
+            // N O T E: GENERATE UNIQUE TITLES!!!
+            title: `Note ${notes.length+1}`,
             body: "# Type your markdown note's title here"
         }
         setNotes(prevNotes => [newNote, ...prevNotes]);
@@ -27,17 +30,47 @@ export default function App() {
     }
     
     function updateNote(text) {
-        setNotes(oldNotes => oldNotes.map(oldNote => {
+        setNotes(oldNotes => {
+            let newNotes = oldNotes.map(oldNote => {
             return oldNote.id === currentNoteId
-                ? { ...oldNote, body: text }
+                ? { ...oldNote, 
+                    body: text }
                 : oldNote
-        }))
+        })
+        localStorage.setItem('notes', JSON.stringify(newNotes))
+        return newNotes
+        }
+        )
     }
-    
+
+    function updateTitle (event) {
+        setNotes(oldNotes => {
+            let newNotes = oldNotes.map(oldNote => {
+            return oldNote.id === currentNoteId
+                ? { ...oldNote, 
+                    title: event.target.value }
+                : oldNote
+        })
+        localStorage.setItem('notes', JSON.stringify(newNotes))
+        return newNotes
+        }
+        )
+    }
+
     function findCurrentNote() {
         return notes.find(note => {
             return note.id === currentNoteId
         }) || notes[0]
+    }
+
+    function deleteNote(){
+        setNotes (oldNotes => {
+            let newNotes = oldNotes.filter (item => {
+                return item.id!=currentNoteId
+            })
+            localStorage.setItem('notes', JSON.stringify(newNotes));
+            return newNotes
+        })
     }
     
     return (
@@ -55,13 +88,15 @@ export default function App() {
                     currentNote={findCurrentNote()}
                     setCurrentNoteId={setCurrentNoteId}
                     newNote={createNewNote}
+                    deleteNote={deleteNote}
                 />
                 {
                     currentNoteId && 
                     notes.length > 0 &&
                     <Editor 
                         currentNote={findCurrentNote()} 
-                        updateNote={updateNote} 
+                        updateNote={updateNote}
+                        updateTitle={updateTitle} 
                     />
                 }
             </Split>

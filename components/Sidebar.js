@@ -3,14 +3,14 @@ import React from "react"
 export default function Sidebar(props) {
     const noteElements = props.notes.map((note, index) => (
         <div key={note.id}>
-            <div
-                
+            <div 
                 className={`title ${
                     note.id === props.currentNote.id ? "selected-note" : ""
                 }`}
                 onClick={() => props.setCurrentNoteId(note.id)}
             >
-                <h4 className="text-snippet">Note {index + 1}</h4>
+                <h4 className="text-snippet">{note.title}</h4>
+                <i className="fas fa-trash" onClick={props.deleteNote}></i>
             </div>
         </div>
     ))
