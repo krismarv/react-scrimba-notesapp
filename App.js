@@ -6,17 +6,23 @@ import Split from "react-split"
 import {nanoid} from "nanoid"
 
 export default function App() {
-    const [notes, setNotes] = React.useState([])
+
+    // set notes from localStorage
+    let notesInitial = localStorage.getItem('notes') ? JSON.parse(localStorage.getItem('notes')) : []
+    const [notes, setNotes] = React.useState(notesInitial)
+
     const [currentNoteId, setCurrentNoteId] = React.useState(
         (notes[0] && notes[0].id) || ""
     )
+    
     
     function createNewNote() {
         const newNote = {
             id: nanoid(),
             body: "# Type your markdown note's title here"
         }
-        setNotes(prevNotes => [newNote, ...prevNotes])
+        setNotes(prevNotes => [newNote, ...prevNotes]);
+        localStorage.setItem('notes', JSON.stringify(notes));
         setCurrentNoteId(newNote.id)
     }
     
@@ -60,6 +66,7 @@ export default function App() {
                 }
             </Split>
             :
+            // no new notes
             <div className="no-notes">
                 <h1>You have no notes</h1>
                 <button 

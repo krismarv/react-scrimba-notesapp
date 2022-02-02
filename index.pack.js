@@ -981,7 +981,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function App() {
-    var _React$useState = _react2.default.useState([]),
+
+    // set notes from localStorage
+    var notesInitial = localStorage.getItem('notes') ? JSON.parse(localStorage.getItem('notes')) : [];
+
+    var _React$useState = _react2.default.useState(notesInitial),
         _React$useState2 = _slicedToArray(_React$useState, 2),
         notes = _React$useState2[0],
         setNotes = _React$useState2[1];
@@ -999,6 +1003,7 @@ function App() {
         setNotes(function (prevNotes) {
             return [newNote].concat(_toConsumableArray(prevNotes));
         });
+        localStorage.setItem('notes', JSON.stringify(notes));
         setCurrentNoteId(newNote.id);
     }
 
@@ -1036,7 +1041,9 @@ function App() {
                 currentNote: findCurrentNote(),
                 updateNote: updateNote
             })
-        ) : _react2.default.createElement(
+        ) :
+        // no new notes
+        _react2.default.createElement(
             "div",
             { className: "no-notes" },
             _react2.default.createElement(
