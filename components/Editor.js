@@ -17,7 +17,7 @@ export default function Editor({ currentNote, updateNote, updateTitle }) {
             <input
                 id='title-input'
                 onChange={updateTitle}
-                name='title'
+                value={currentNote.title}
                 >
             </input>
             <ReactMde

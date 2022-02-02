@@ -15,8 +15,6 @@ export default function App() {
         (notes[0] && notes[0].id) || ""
     )
 
-    console.log(notes)
-
     function createNewNote() {
         const newNote = {
             id: nanoid(),
@@ -29,6 +27,12 @@ export default function App() {
         setCurrentNoteId(newNote.id)
     }
     
+    function moveToTop(notes, currentId){
+        let newNotes = notes
+        newNotes.unshift(newNotes.splice(newNotes.findIndex(item => item.id===currentId),1)[0]);
+        return newNotes
+    }
+
     function updateNote(text) {
         setNotes(oldNotes => {
             let newNotes = oldNotes.map(oldNote => {
@@ -37,6 +41,7 @@ export default function App() {
                     body: text }
                 : oldNote
         })
+        newNotes = moveToTop(newNotes, currentNoteId)
         localStorage.setItem('notes', JSON.stringify(newNotes))
         return newNotes
         }
@@ -51,6 +56,7 @@ export default function App() {
                     title: event.target.value }
                 : oldNote
         })
+        newNotes = moveToTop(newNotes, currentNoteId);
         localStorage.setItem('notes', JSON.stringify(newNotes))
         return newNotes
         }

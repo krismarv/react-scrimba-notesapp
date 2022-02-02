@@ -995,8 +995,6 @@ function App() {
         currentNoteId = _React$useState4[0],
         setCurrentNoteId = _React$useState4[1];
 
-    console.log(notes);
-
     function createNewNote() {
         var newNote = {
             id: (0, _nanoid.nanoid)(),
@@ -1011,12 +1009,21 @@ function App() {
         setCurrentNoteId(newNote.id);
     }
 
+    function moveToTop(notes, currentId) {
+        var newNotes = notes;
+        newNotes.unshift(newNotes.splice(newNotes.findIndex(function (item) {
+            return item.id === currentId;
+        }), 1)[0]);
+        return newNotes;
+    }
+
     function updateNote(text) {
         setNotes(function (oldNotes) {
             var newNotes = oldNotes.map(function (oldNote) {
                 return oldNote.id === currentNoteId ? _extends({}, oldNote, {
                     body: text }) : oldNote;
             });
+            newNotes = moveToTop(newNotes, currentNoteId);
             localStorage.setItem('notes', JSON.stringify(newNotes));
             return newNotes;
         });
@@ -1028,6 +1035,7 @@ function App() {
                 return oldNote.id === currentNoteId ? _extends({}, oldNote, {
                     title: event.target.value }) : oldNote;
             });
+            newNotes = moveToTop(newNotes, currentNoteId);
             localStorage.setItem('notes', JSON.stringify(newNotes));
             return newNotes;
         });
@@ -1191,7 +1199,7 @@ function Editor(_ref) {
         _react2.default.createElement("input", {
             id: "title-input",
             onChange: updateTitle,
-            name: "title"
+            value: currentNote.title
         }),
         _react2.default.createElement(_reactMde2.default, {
             value: currentNote.body,
