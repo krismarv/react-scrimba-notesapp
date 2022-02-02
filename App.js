@@ -15,6 +15,8 @@ export default function App() {
         (notes[0] && notes[0].id) || ""
     )
 
+    const [view, setView] = React.useState('list')
+
     function createNewNote() {
         const newNote = {
             id: nanoid(),
@@ -79,6 +81,12 @@ export default function App() {
         })
     }
     
+    function changeView(event){
+        setView(event.target.value)
+    }
+
+    console.log(notes)
+
     return (
         <main>
         {
@@ -95,6 +103,8 @@ export default function App() {
                     setCurrentNoteId={setCurrentNoteId}
                     newNote={createNewNote}
                     deleteNote={deleteNote}
+                    changeView={changeView}
+                    view={view}
                 />
                 {
                     currentNoteId && 
