@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import Sidebar from "./components/Sidebar"
 import Editor from "./components/Editor"
 import { data } from "./data"
@@ -16,23 +16,22 @@ export default function App() {
     )
 
     const [view, setView] = React.useState('list')
+    const [sort, setSort] = React.useState('updated')
+
 
     function createNewNote() {
         const newNote = {
             id: nanoid(),
             // N O T E: GENERATE UNIQUE TITLES!!!
             title: `Note ${notes.length+1}`,
-            body: "# Type your markdown note's title here"
+            body: "# Type your markdown note's title here", 
+            date: new Date().toLocaleDateString('cs-CZ'), 
+            updated: Date.now()
         }
         setNotes(prevNotes => [newNote, ...prevNotes]);
         localStorage.setItem('notes', JSON.stringify(notes));
+        doSort(sort);
         setCurrentNoteId(newNote.id)
-    }
-    
-    function moveToTop(notes, currentId){
-        let newNotes = notes
-        newNotes.unshift(newNotes.splice(newNotes.findIndex(item => item.id===currentId),1)[0]);
-        return newNotes
     }
 
     function updateNote(text) {
@@ -40,11 +39,13 @@ export default function App() {
             let newNotes = oldNotes.map(oldNote => {
             return oldNote.id === currentNoteId
                 ? { ...oldNote, 
-                    body: text }
+                    body: text, 
+                    updated: Date.now() }
                 : oldNote
         })
-        newNotes = moveToTop(newNotes, currentNoteId)
-        localStorage.setItem('notes', JSON.stringify(newNotes))
+
+        localStorage.setItem('notes', JSON.stringify(newNotes));
+        doSort(sort);
         return newNotes
         }
         )
@@ -58,8 +59,9 @@ export default function App() {
                     title: event.target.value }
                 : oldNote
         })
-        newNotes = moveToTop(newNotes, currentNoteId);
-        localStorage.setItem('notes', JSON.stringify(newNotes))
+ 
+        localStorage.setItem('notes', JSON.stringify(newNotes));
+        doSort(sort);
         return newNotes
         }
         )
@@ -85,7 +87,55 @@ export default function App() {
         setView(event.target.value)
     }
 
-    console.log(notes)
+    function doSort(currentSort) {
+        switch (currentSort) {
+            case "updated":
+                setNotes(oldNotes => {
+                    return [...oldNotes].sort((a,b) => {
+                        return a.updated - b.updated
+                    })
+                });
+                break;
+            case "created":
+                setNotes(oldNotes => {
+                    return [...oldNotes].sort((a,b) => {
+                        if (a.date > b.date) {
+                          return 1
+                      } else if (a.date < b.date) {
+                          return -1
+                      } else if (a.date == b.date) {
+                          return 0
+                      }
+                    })
+                });
+                break;
+            case "name":
+                setNotes(oldNotes => {
+                    return [...oldNotes].sort((a,b) => {
+                        let titleA = a.title.toUpperCase();
+                        let titleB = b.title.toUpperCase();
+                        if (titleA > titleB) {
+                          return 1
+                      } else if (titleA < titleB) {
+                          return -1
+                      } else if (titleA == titleB) {
+                          return 0
+                      }
+                    })});
+            break;
+        }
+    }
+
+    
+    // sorting
+    function changeSort(event) {
+        setSort(event.target.value);
+    }
+    useEffect(()=>{
+        doSort(sort);
+        console.log(sort, notes)
+    }, [sort])
+
 
     return (
         <main>
@@ -105,6 +155,8 @@ export default function App() {
                     deleteNote={deleteNote}
                     changeView={changeView}
                     view={view}
+                    changeSort={changeSort}
+                    sort={sort}
                 />
                 {
                     currentNoteId && 

@@ -42,13 +42,32 @@ button:focus {
     align-items: center;
 }
 
-.sidebar--header > h3 {
-    font-size: 1.75rem;
+.sidebar--header h3 {
+    font-size: 2rem;
+    text-transform: uppercase;
+    color:#4A4E74;
+    letter-spacing:5pt
+}
+#header-image {
+    width:40%;
+    margin:5%
+}
+.select {
+    display:flex;
+    margin-bottom:5%
+}
+.fa-eye {
+    color:#4A4E74;
+    margin-right:5px
 }
 
+.header-column {
+    display:flex;
+    flex-direction: column;
+}
 .new-note {
     cursor: pointer;
-    background-color: #4A4E74;
+    background-color: #74b7c7;
     border: none;
     color: white;
     border-radius: 3px;
@@ -172,4 +191,13 @@ button:focus {
 }
 .selected-note .text-body {
     color:white
+}
+.selected-note .note-date {
+    color:white
+}
+.note-date {
+    font-size:.7rem;
+}
+.card.note .note-date {
+    margin-bottom:5%
 }
