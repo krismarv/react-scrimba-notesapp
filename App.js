@@ -74,10 +74,10 @@ export default function App() {
         }) || notes[0]
     }
 
-    function deleteNote(){
+    function deleteNote(event, noteid){
         setNotes (oldNotes => {
             let newNotes = oldNotes.filter (item => {
-                return item.id!=currentNoteId
+                return item.id!=noteid
             })
             localStorage.setItem('notes', JSON.stringify(newNotes));
             return newNotes
@@ -175,7 +175,6 @@ export default function App() {
     }
     useEffect(()=>{
         doSort(sort);
-        console.log(sort, notes)
     }, [sort, direction])
 
     function changeDirection(event) {

@@ -15,7 +15,7 @@ export default function Sidebar(props) {
                 }
                 <div>
                     <span className='note-date'>{note.date}</span>
-                    <i className="fas fa-trash" onClick={props.deleteNote}></i>
+                    <i className="fas fa-trash" onClick={(event) => props.deleteNote(event, note.id)}></i>
                 </div>
             </div>
         </div>

@@ -1060,10 +1060,10 @@ function App() {
         }) || notes[0];
     }
 
-    function deleteNote() {
+    function deleteNote(event, noteid) {
         setNotes(function (oldNotes) {
             var newNotes = oldNotes.filter(function (item) {
-                return item.id != currentNoteId;
+                return item.id != noteid;
             });
             localStorage.setItem('notes', JSON.stringify(newNotes));
             return newNotes;
@@ -1385,7 +1385,9 @@ function Sidebar(props) {
                         { className: "note-date" },
                         note.date
                     ),
-                    _react2.default.createElement("i", { className: "fas fa-trash", onClick: props.deleteNote })
+                    _react2.default.createElement("i", { className: "fas fa-trash", onClick: function onClick(event) {
+                            return props.deleteNote(event, note.id);
+                        } })
                 )
             )
         );
