@@ -40,6 +40,8 @@ button:focus {
     display: flex;
     justify-content: space-around;
     align-items: center;
+    position:sticky;
+    box-shadow: 0px 0px 5px lightgrey;
 }
 
 .sidebar--header h3 {
@@ -56,14 +58,16 @@ button:focus {
     display:flex;
     margin-bottom:5%
 }
-.fa-eye {
+.fa-eye, .sidebar--header i {
     color:#4A4E74;
-    margin-right:5px
+    margin-right:5px;
+    padding:5%
 }
 
 .header-column {
     display:flex;
     flex-direction: column;
+    padding-right:10%
 }
 .new-note {
     cursor: pointer;
@@ -72,7 +76,8 @@ button:focus {
     color: white;
     border-radius: 3px;
     height: 30px;
-    width: 30px;
+    /*width: 30px; */
+    margin:15% 0%
 }
 
 .first-note {
@@ -163,10 +168,16 @@ button:focus {
 }
 .fa-trash {
     font-size:.8rem;
-    margin-right:3%
+    margin-left:13%
 }
 .selected-note .fa-trash {
     color:white
+}
+.note.title div {
+    flex-basis: 25%;
+    display:flex;
+    justify-content: flex-end;
+    margin-right:5%
 }
 /* CARD VIEW */
 .card.note {
@@ -200,4 +211,20 @@ button:focus {
 }
 .card.note .note-date {
     margin-bottom:5%
+}
+/* select */ 
+#view-select, #sort-select {
+    border: none;
+    box-shadow: 0px 0px 5px lightgrey;
+    padding: 5%;
+    width:200px
+}
+#view-select:focus, #sort-select:focus {
+    border: none;
+    box-shadow: 0px 0px 5px lightgrey;
+    padding: 5%;
+    width:200px
+}
+.fa-arrow-down, .fa-arrow-up {
+    cursor:pointer
 }

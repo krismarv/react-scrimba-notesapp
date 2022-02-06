@@ -17,6 +17,7 @@ export default function App() {
 
     const [view, setView] = React.useState('list')
     const [sort, setSort] = React.useState('updated')
+    const [direction, setDirection] = React.useState('asc')
 
 
     function createNewNote() {
@@ -90,39 +91,80 @@ export default function App() {
     function doSort(currentSort) {
         switch (currentSort) {
             case "updated":
-                setNotes(oldNotes => {
-                    return [...oldNotes].sort((a,b) => {
-                        return a.updated - b.updated
-                    })
-                });
-                break;
+                if (direction==='asc') {
+                    setNotes(oldNotes => {
+                        return [...oldNotes].sort((a,b) => {
+                            return a.updated - b.updated
+                        })
+                    });
+                    break;
+                } else {
+                    setNotes(oldNotes => {
+                        return [...oldNotes].sort((a,b) => {
+                            return b.updated - a.updated
+                        })
+                    });
+                    break;
+                }
             case "created":
-                setNotes(oldNotes => {
-                    return [...oldNotes].sort((a,b) => {
-                        if (a.date > b.date) {
-                          return 1
-                      } else if (a.date < b.date) {
-                          return -1
-                      } else if (a.date == b.date) {
-                          return 0
-                      }
-                    })
-                });
-                break;
+                if (direction === 'asc') {
+                    setNotes(oldNotes => {
+                        return [...oldNotes].sort((a,b) => {
+                            if (a.date > b.date) {
+                              return 1
+                          } else if (a.date < b.date) {
+                              return -1
+                          } else if (a.date == b.date) {
+                              return 0
+                          }
+                        })
+                    });
+                    break;
+                } else {
+                    setNotes(oldNotes => {
+                        return [...oldNotes].sort((a,b) => {
+                            if (a.date > b.date) {
+                              return -1
+                          } else if (a.date < b.date) {
+                              return 1
+                          } else if (a.date == b.date) {
+                              return 0
+                          }
+                        })
+                    });
+                    break;
+                }
             case "name":
-                setNotes(oldNotes => {
-                    return [...oldNotes].sort((a,b) => {
-                        let titleA = a.title.toUpperCase();
-                        let titleB = b.title.toUpperCase();
-                        if (titleA > titleB) {
-                          return 1
-                      } else if (titleA < titleB) {
-                          return -1
-                      } else if (titleA == titleB) {
-                          return 0
-                      }
-                    })});
-            break;
+                if (direction === 'asc') {
+                    setNotes(oldNotes => {
+                        return [...oldNotes].sort((a,b) => {
+                            let titleA = a.title.toUpperCase();
+                            let titleB = b.title.toUpperCase();
+                            if (titleA > titleB) {
+                              return 1
+                          } else if (titleA < titleB) {
+                              return -1
+                          } else if (titleA == titleB) {
+                              return 0
+                          }
+                        })});
+                break; 
+                } else {
+                    setNotes(oldNotes => {
+                        return [...oldNotes].sort((a,b) => {
+                            let titleA = a.title.toUpperCase();
+                            let titleB = b.title.toUpperCase();
+                            if (titleA > titleB) {
+                              return -1
+                          } else if (titleA < titleB) {
+                              return 1
+                          } else if (titleA == titleB) {
+                              return 0
+                          }
+                        })});
+                break;
+                }
+
         }
     }
 
@@ -134,8 +176,11 @@ export default function App() {
     useEffect(()=>{
         doSort(sort);
         console.log(sort, notes)
-    }, [sort])
+    }, [sort, direction])
 
+    function changeDirection(event) {
+        setDirection(oldValue => oldValue==='asc' ? 'desc' : 'asc')
+    }
 
     return (
         <main>
@@ -157,6 +202,8 @@ export default function App() {
                     view={view}
                     changeSort={changeSort}
                     sort={sort}
+                    direction={direction}
+                    changeDirection={changeDirection}
                 />
                 {
                     currentNoteId && 

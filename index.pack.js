@@ -1005,6 +1005,11 @@ function App() {
         sort = _React$useState8[0],
         setSort = _React$useState8[1];
 
+    var _React$useState9 = _react2.default.useState('asc'),
+        _React$useState10 = _slicedToArray(_React$useState9, 2),
+        direction = _React$useState10[0],
+        setDirection = _React$useState10[1];
+
     function createNewNote() {
         var newNote = {
             id: (0, _nanoid.nanoid)(),
@@ -1072,40 +1077,82 @@ function App() {
     function doSort(currentSort) {
         switch (currentSort) {
             case "updated":
-                setNotes(function (oldNotes) {
-                    return [].concat(_toConsumableArray(oldNotes)).sort(function (a, b) {
-                        return a.updated - b.updated;
+                if (direction === 'asc') {
+                    setNotes(function (oldNotes) {
+                        return [].concat(_toConsumableArray(oldNotes)).sort(function (a, b) {
+                            return a.updated - b.updated;
+                        });
                     });
-                });
-                break;
+                    break;
+                } else {
+                    setNotes(function (oldNotes) {
+                        return [].concat(_toConsumableArray(oldNotes)).sort(function (a, b) {
+                            return b.updated - a.updated;
+                        });
+                    });
+                    break;
+                }
             case "created":
-                setNotes(function (oldNotes) {
-                    return [].concat(_toConsumableArray(oldNotes)).sort(function (a, b) {
-                        if (a.date > b.date) {
-                            return 1;
-                        } else if (a.date < b.date) {
-                            return -1;
-                        } else if (a.date == b.date) {
-                            return 0;
-                        }
+                if (direction === 'asc') {
+                    setNotes(function (oldNotes) {
+                        return [].concat(_toConsumableArray(oldNotes)).sort(function (a, b) {
+                            if (a.date > b.date) {
+                                return 1;
+                            } else if (a.date < b.date) {
+                                return -1;
+                            } else if (a.date == b.date) {
+                                return 0;
+                            }
+                        });
                     });
-                });
-                break;
+                    break;
+                } else {
+                    setNotes(function (oldNotes) {
+                        return [].concat(_toConsumableArray(oldNotes)).sort(function (a, b) {
+                            if (a.date > b.date) {
+                                return -1;
+                            } else if (a.date < b.date) {
+                                return 1;
+                            } else if (a.date == b.date) {
+                                return 0;
+                            }
+                        });
+                    });
+                    break;
+                }
             case "name":
-                setNotes(function (oldNotes) {
-                    return [].concat(_toConsumableArray(oldNotes)).sort(function (a, b) {
-                        var titleA = a.title.toUpperCase();
-                        var titleB = b.title.toUpperCase();
-                        if (titleA > titleB) {
-                            return 1;
-                        } else if (titleA < titleB) {
-                            return -1;
-                        } else if (titleA == titleB) {
-                            return 0;
-                        }
+                if (direction === 'asc') {
+                    setNotes(function (oldNotes) {
+                        return [].concat(_toConsumableArray(oldNotes)).sort(function (a, b) {
+                            var titleA = a.title.toUpperCase();
+                            var titleB = b.title.toUpperCase();
+                            if (titleA > titleB) {
+                                return 1;
+                            } else if (titleA < titleB) {
+                                return -1;
+                            } else if (titleA == titleB) {
+                                return 0;
+                            }
+                        });
                     });
-                });
-                break;
+                    break;
+                } else {
+                    setNotes(function (oldNotes) {
+                        return [].concat(_toConsumableArray(oldNotes)).sort(function (a, b) {
+                            var titleA = a.title.toUpperCase();
+                            var titleB = b.title.toUpperCase();
+                            if (titleA > titleB) {
+                                return -1;
+                            } else if (titleA < titleB) {
+                                return 1;
+                            } else if (titleA == titleB) {
+                                return 0;
+                            }
+                        });
+                    });
+                    break;
+                }
+
         }
     }
 
@@ -1116,7 +1163,13 @@ function App() {
     (0, _react.useEffect)(function () {
         doSort(sort);
         console.log(sort, notes);
-    }, [sort]);
+    }, [sort, direction]);
+
+    function changeDirection(event) {
+        setDirection(function (oldValue) {
+            return oldValue === 'asc' ? 'desc' : 'asc';
+        });
+    }
 
     return _react2.default.createElement(
         "main",
@@ -1137,7 +1190,9 @@ function App() {
                 changeView: changeView,
                 view: view,
                 changeSort: changeSort,
-                sort: sort
+                sort: sort,
+                direction: direction,
+                changeDirection: changeDirection
             }),
             currentNoteId && notes.length > 0 && _react2.default.createElement(_Editor2.default, {
                 currentNote: findCurrentNote(),
@@ -1323,16 +1378,15 @@ function Sidebar(props) {
                     note.body.substring(0, 50) + '...'
                 ) : "",
                 _react2.default.createElement(
-                    "span",
-                    { className: "note-date" },
-                    note.date
-                ),
-                _react2.default.createElement(
-                    "span",
-                    { className: "note-date" },
-                    note.updated
-                ),
-                _react2.default.createElement("i", { className: "fas fa-trash", onClick: props.deleteNote })
+                    "div",
+                    null,
+                    _react2.default.createElement(
+                        "span",
+                        { className: "note-date" },
+                        note.date
+                    ),
+                    _react2.default.createElement("i", { className: "fas fa-trash", onClick: props.deleteNote })
+                )
             )
         );
     });
@@ -1355,7 +1409,7 @@ function Sidebar(props) {
                 _react2.default.createElement(
                     "div",
                     { className: "select" },
-                    _react2.default.createElement("i", { className: "far fa-eye" }),
+                    _react2.default.createElement("i", { className: props.view === 'list' ? 'fas fa-list' : 'fas fa-th' }),
                     _react2.default.createElement(
                         "select",
                         { id: "view-select", onChange: props.changeView, value: props.view },
@@ -1374,7 +1428,7 @@ function Sidebar(props) {
                 _react2.default.createElement(
                     "div",
                     { className: "select" },
-                    _react2.default.createElement("i", { className: "far fa-eye" }),
+                    _react2.default.createElement("i", { className: props.direction === 'asc' ? 'fas fa-arrow-up' : 'fas fa-arrow-down', onClick: props.changeDirection }),
                     _react2.default.createElement(
                         "select",
                         { id: "sort-select", onChange: props.changeSort, value: props.sort },
@@ -1398,7 +1452,7 @@ function Sidebar(props) {
                 _react2.default.createElement(
                     "button",
                     { className: "new-note", onClick: props.newNote },
-                    "+"
+                    "+ Add new"
                 )
             )
         ),
